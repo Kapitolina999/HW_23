@@ -27,7 +27,7 @@ def perform_query():
     if not os.path.exists(os.path.join(DATA_DIR, file_name)):
         raise BadRequest
 
-    data = get_data('apache_logs.txt')
+    data = get_data(DATA_DIR, 'apache_logs.txt')
     return jsonify(do_query(data, query))
 
 

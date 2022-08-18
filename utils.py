@@ -1,22 +1,18 @@
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
-
-
-def get_data(file_name):
+def get_data(path, file_name):
     try:
-        with open(os.path.join(DATA_DIR, file_name), 'r') as file:
+        with open(os.path.join(path, file_name), 'r') as file:
             return [i.rstrip('\n') for i in file.readlines()]
     except FileNotFoundError:
         return 'Файл не найден'
 
 
-def limit(list_obj, num):
+def limit(list_obj, num: int) -> list:
     return list_obj[:num]
 
 
-def do_cmd(cmd: str, value:str, data: list) -> list:
+def do_cmd(cmd: str, value: str, data: list) -> list:
     dict_cmd = {
         'map': map(lambda x: x.split(' ')[int(value)], data),
         'filter': filter(lambda line: value in line, data),
@@ -28,7 +24,7 @@ def do_cmd(cmd: str, value:str, data: list) -> list:
     return list(dict_cmd.get(cmd))
 
 
-def do_query(data, query):
+def do_query(data: list, query: dict) -> list:
     result = data
     if 'cmd1' in query:
         result = do_cmd(query['cmd1'], query['value1'], data=result)

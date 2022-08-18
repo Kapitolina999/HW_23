@@ -3,7 +3,7 @@ import os
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import BadRequest
 
-from utils import get_data, do_cmd, do_query
+from utils import get_data, do_query, get_cmd
 
 app = Flask(__name__)
 
@@ -28,7 +28,9 @@ def perform_query():
         raise BadRequest
 
     data = get_data(DATA_DIR, 'apache_logs.txt')
-    return jsonify(do_query(data, query))
+    chunk = get_cmd(query)
+
+    return jsonify(do_query(data, chunk))
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import os
 
+
 def get_data(path, file_name):
     try:
         with open(os.path.join(path, file_name), 'r') as file:
@@ -24,10 +25,18 @@ def do_cmd(cmd: str, value: str, data: list) -> list:
     return list(dict_cmd.get(cmd))
 
 
-def do_query(data: list, query: dict) -> list:
+def get_cmd(query):
+    del query['file_name']
+    buf = []
+    for item in query.values():
+        buf.append(item)
+        if len(buf) == 2:
+            yield buf
+            buf = []
+
+
+def do_query(data: list, chunk) -> list:
     result = data
-    if 'cmd1' in query:
-        result = do_cmd(query['cmd1'], query['value1'], data=result)
-    if 'cmd2' in query:
-        result = do_cmd(query['cmd2'], query['value2'], data=result)
+    for i in chunk:
+        result = do_cmd(*i, data=result)
     return result

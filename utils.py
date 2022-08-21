@@ -1,32 +1,28 @@
 import os
+from typing import Iterable
 
 
-def get_data(path, file_name):
-    try:
-        with open(os.path.join(path, file_name), 'r') as file:
-            return [i.rstrip('\n') for i in file.readlines()]
-    except FileNotFoundError:
-        return 'Файл не найден'
+def query_builder(cmd, value, data: Iterable) -> Iterable:
+    mapped_data = map(lambda v: v.strip(), data)
 
+    if cmd == "unique":
+        return set(mapped_data)
 
-def limit(list_obj, num: int) -> list:
-    return list_obj[:num]
+    if value:
+        if cmd == "filter":
+            return filter(lambda x: value in x, mapped_data)
+        elif cmd == "map":
+            return map(lambda x: x.split(' ')[int(value)], mapped_data)
+        elif cmd == "limit":
+            return list(mapped_data)[:int(value)]
+        elif cmd == "sort":
+            return sorted(mapped_data, reverse=True if value == "desc" else False)
 
-
-def do_cmd(cmd: str, value: str, data: list) -> list:
-    dict_cmd = {
-        'map': map(lambda x: x.split(' ')[int(value)], data),
-        'filter': filter(lambda line: value in line, data),
-        'unique': set(data),
-        'sort': sorted(data, reverse=True if value == 'desc' else True),
-        'limit': limit(data, num=int(value) if value.isdigit() else 0)
-    }
-
-    return list(dict_cmd.get(cmd))
+    return mapped_data
 
 
 def get_cmd(query):
-    del query['file_name']
+    del query["file_name"]
     buf = []
     for item in query.values():
         buf.append(item)
@@ -35,8 +31,13 @@ def get_cmd(query):
             buf = []
 
 
-def do_query(data: list, chunk) -> list:
+def do_query(data, items):
     result = data
-    for i in chunk:
-        result = do_cmd(*i, data=result)
+    for i in items:
+        result = query_builder(*i, data=result)
     return result
+
+
+def get_result(path, file_name, chunk):
+    with open(os.path.join(path, file_name)) as fd:
+        return do_query(fd, chunk)

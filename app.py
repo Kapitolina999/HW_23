@@ -3,7 +3,7 @@ import os
 from flask import Flask, request, jsonify
 from werkzeug.exceptions import BadRequest
 
-from utils import get_data, do_query, get_cmd
+from utils import get_result, get_cmd
 
 app = Flask(__name__)
 
@@ -16,21 +16,19 @@ def perform_query():
     query = request.json
 
     try:
-        file_name = query['file_name']
-        cmd1 = query['cmd1']
-        value1 = query['value1']
-        cmd2 = query['cmd2']
-        value2 = query['value2']
+        file_name = query["file_name"]
+        cmd1 = query["cmd1"]
+        value1 = query["value1"]
     except KeyError:
         return '', 400
 
     if not os.path.exists(os.path.join(DATA_DIR, file_name)):
         raise BadRequest
 
-    data = get_data(DATA_DIR, 'apache_logs.txt')
     chunk = get_cmd(query)
 
-    return jsonify(do_query(data, chunk))
+    result = get_result(DATA_DIR, file_name, chunk)
+    return result
 
 
 if __name__ == '__main__':

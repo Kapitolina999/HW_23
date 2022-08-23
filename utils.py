@@ -2,6 +2,16 @@ import os
 from typing import Iterable
 
 
+def slice_limit(data, limit):
+    i = 0
+    for item in data:
+        if i < limit:
+            yield item
+        else:
+            break
+        i += 1
+
+
 def query_builder(cmd, value, data: Iterable) -> Iterable:
     mapped_data = map(lambda v: v.strip(), data)
 
@@ -14,7 +24,7 @@ def query_builder(cmd, value, data: Iterable) -> Iterable:
         elif cmd == "map":
             return map(lambda x: x.split(' ')[int(value)], mapped_data)
         elif cmd == "limit":
-            return list(mapped_data)[:int(value)]
+            return slice_limit(mapped_data, int(value))
         elif cmd == "sort":
             return sorted(mapped_data, reverse=True if value == "desc" else False)
 
@@ -32,12 +42,16 @@ def get_cmd(query):
 
 
 def do_query(data, items):
-    result = data
+    result = list(data)
     for i in items:
         result = query_builder(*i, data=result)
     return result
 
 
 def get_result(path, file_name, chunk):
-    with open(os.path.join(path, file_name)) as fd:
-        return do_query(fd, chunk)
+    with open(os.path.join(path, file_name)) as f:
+        return do_query(f, chunk)
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")

@@ -19,6 +19,8 @@ def perform_query():
         file_name = query["file_name"]
         cmd1 = query["cmd1"]
         value1 = query["value1"]
+        cmd2 = query["cmd2"]
+        value2 = query["value2"]
     except KeyError:
         return '', 400
 
@@ -28,7 +30,7 @@ def perform_query():
     chunk = get_cmd(query)
 
     result = get_result(DATA_DIR, file_name, chunk)
-    return result
+    return list(result)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,3 @@
-import os
 from typing import Iterable
 
 
@@ -46,12 +45,3 @@ def do_query(data, items):
     for i in items:
         result = query_builder(*i, data=result)
     return result
-
-
-def get_result(path, file_name, chunk):
-    with open(os.path.join(path, file_name)) as f:
-        return do_query(f, chunk)
-
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")

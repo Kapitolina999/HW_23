@@ -30,8 +30,9 @@ def perform_query():
     chunk = get_cmd(query)
 
     result = get_result(DATA_DIR, file_name, chunk)
-    return list(result)
+    return jsonify(list(result))
 
 
 if __name__ == '__main__':
     app.run()
+

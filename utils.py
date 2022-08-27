@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Iterable, Iterator, Generator, List, Tuple, Union, Any
+from typing import Iterable, Iterator, Generator, List, Any, Union
 
 
 def slice_limit(data: Iterable, limit: int) -> Iterator:
@@ -43,13 +43,13 @@ def get_cmd(query: dict) -> Generator:
             buf = []
 
 
-def do_query(data: Iterable, items: Generator) -> Iterable:
+def do_query(data: Union[list, Any], items: Generator) -> list:
     result = data
-    for i in items:
-        result = query_builder(*i, list(result))
+    for cmd, value in items:
+        result = query_builder(cmd, value, result)
     return result
 
 
-def get_result(path: str, file_name: str, chunk: Generator) -> Iterable:
+def get_result(path: str, file_name: str, chunk: Generator) -> list:
     with open(os.path.join(path, file_name)) as f:
         return do_query(f, chunk)

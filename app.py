@@ -31,7 +31,7 @@ def perform_query() -> Union[Response, Tuple[str, int]]:
     chunk = get_cmd(query)
 
     result = get_result(DATA_DIR, file_name, chunk)
-    return jsonify(list(result))
+    return jsonify(result)
 
 
 if __name__ == '__main__':
